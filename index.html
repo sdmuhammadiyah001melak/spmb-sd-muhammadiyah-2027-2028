@@ -85,6 +85,7 @@
                 <a href="#galeri" class="hover:text-blue-900 transition-colors">Galeri</a>
                 <a href="#informasi" class="hover:text-blue-900 transition-colors">Syarat & Jadwal</a>
                 <a href="#berkas" class="hover:text-blue-900 transition-colors">Unduh Berkas</a>
+                <a href="#cekStatus" class="hover:text-blue-900 transition-colors text-amber-600 font-bold">Cek Status</a>
             </div>
 
             <!-- Action Buttons -->
@@ -113,6 +114,7 @@
             <a href="#galeri" class="block font-medium text-slate-700 hover:text-blue-900 py-1">Galeri Activities</a>
             <a href="#informasi" class="block font-medium text-slate-700 hover:text-blue-900 py-1">Syarat & Jadwal</a>
             <a href="#berkas" class="block font-medium text-slate-700 hover:text-blue-900 py-1">Unduh Berkas Cetak</a>
+            <a href="#cekStatus" class="block font-bold text-amber-600 hover:text-amber-700 py-1">Cek Status Siswa</a>
             <button onclick="bukaModalAdmin()" class="w-full text-center bg-slate-100 text-slate-800 font-bold py-2 rounded-xl border border-slate-300 mt-2 flex items-center justify-center gap-2">
                 <i class="ph ph-shield-check text-base"></i> Portal Admin SPMB
             </button>
@@ -475,6 +477,52 @@
         </div>
     </section>
 
+    <!-- FITUR BARU: SEKSI CEK STATUS SISWA OLEH ORANG TUA (BAGIAN PALING BAWAH) -->
+    <section id="cekStatus" class="py-16 bg-blue-900 text-white border-t border-slate-800">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-2xl mx-auto mb-10">
+                <span class="text-amber-400 font-bold text-xs uppercase tracking-wider">Layanan Orang Tua</span>
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-white mt-1">Cek Status Pendaftaran Siswa</h2>
+                <p class="text-slate-300 text-xs sm:text-sm mt-1">Masukkan Nomor Registrasi pendaftaran calon peserta didik untuk memeriksa progres verifikasi.</p>
+            </div>
+
+            <div class="max-w-xl mx-auto bg-white/10 backdrop-blur-md rounded-3xl p-6 sm:p-8 border border-white/20 card-shadow space-y-6">
+                <form onsubmit="prosesCekStatusOrtu(event)" class="flex flex-col sm:flex-row gap-3">
+                    <input type="text" id="inputKodeCek" required placeholder="Contoh: SPMB-2027-1234" class="flex-1 px-4 py-3 rounded-xl text-slate-900 font-mono font-bold text-sm bg-white focus:outline-none focus:ring-2 focus:ring-amber-500 uppercase">
+                    <button type="submit" id="btnCekStatus" class="bg-amber-500 hover:bg-amber-600 text-white font-bold px-6 py-3 rounded-xl transition-all flex items-center justify-center gap-2 text-sm shrink-0">
+                        <i class="ph ph-magnifying-glass text-lg"></i>
+                        <span>Cek Status</span>
+                    </button>
+                </form>
+
+                <!-- Box Hasil Pencarian Status -->
+                <div id="hasilCekStatus" class="hidden bg-white text-slate-800 rounded-2xl p-5 border border-slate-200 text-xs space-y-3">
+                    <div class="flex items-center justify-between border-b pb-3">
+                        <div>
+                            <span class="text-[10px] text-slate-400 font-bold uppercase block">Hasil Pencarian</span>
+                            <h4 id="resNamaSiswa" class="text-base font-bold text-slate-900">-</h4>
+                            <span id="resKodeReg" class="font-mono text-amber-600 font-bold text-xs">-</span>
+                        </div>
+                        <div id="resStatusBadge" class="px-3 py-1.5 rounded-full font-bold text-xs bg-slate-100 text-slate-700">
+                            -
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-2 text-slate-600 pt-1">
+                        <div><span class="text-slate-400 block text-[10px]">Tanggal Daftar:</span> <strong id="resTglDaftar" class="text-slate-800">-</strong></div>
+                        <div><span class="text-slate-400 block text-[10px]">Jenis Kelamin:</span> <strong id="resJkel" class="text-slate-800">-</strong></div>
+                        <div><span class="text-slate-400 block text-[10px]">Nama Orang Tua:</span> <strong id="resOrtu" class="text-slate-800">-</strong></div>
+                        <div><span class="text-slate-400 block text-[10px]">Asal TK / PAUD:</span> <strong id="resAsal" class="text-slate-800">-</strong></div>
+                    </div>
+
+                    <div id="resKeteranganStatus" class="p-3 bg-amber-50 border border-amber-200 rounded-xl text-amber-900 text-xs leading-relaxed">
+                        -
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Footer -->
     <footer class="bg-slate-900 text-white pt-12 pb-8 border-t border-slate-800">
         <div class="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -512,7 +560,7 @@
             </div>
 
             <div class="border-t border-slate-800 pt-6 text-center text-xs text-slate-500">
-                <p>&copy; <span id="txtTahunFooter">2026</span> SD Muhammadiyah 001 Melak. All Rights Reserved.</p>
+                <p>&copy; <span id="txtTahunFooter">2026</span> <span id="txtFooterCopyrightSekolah">SD Muhammadiyah 001 Melak</span>. All Rights Reserved.</p>
             </div>
         </div>
     </footer>
@@ -605,7 +653,7 @@
                     </div>
                     <div>
                         <h2 class="text-lg sm:text-xl font-bold">Pusat Konfigurasi Admin SPMB</h2>
-                        <p class="text-xs text-slate-400">Kelola pendaftaran siswa, cetak dokumen formal, dan atur status secara langsung.</p>
+                        <p class="text-xs text-slate-400">Kelola pendaftaran siswa, kelola informasi sekolah, dan filter data per Tahun Ajaran.</p>
                     </div>
                 </div>
                 <button onclick="tutupPanelAdmin()" class="w-9 h-9 bg-slate-800 hover:bg-red-600 rounded-xl flex items-center justify-center transition-colors text-slate-300 hover:text-white">
@@ -613,84 +661,180 @@
                 </button>
             </div>
 
-            <!-- Admin Toolbar & Stats -->
-            <div class="p-4 sm:p-6 bg-slate-50 border-b border-slate-200 shrink-0 space-y-4">
-                <!-- Stats Grid -->
-                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                    <div class="bg-white p-3 sm:p-4 rounded-2xl border border-slate-200 shadow-sm">
-                        <span class="text-[10px] font-bold text-slate-400 uppercase">Total Pendaftar</span>
-                        <div class="text-xl sm:text-2xl font-extrabold text-slate-900 mt-0.5" id="statTotal">0</div>
+            <!-- Tab Menu Admin -->
+            <div class="bg-slate-100 border-b border-slate-200 flex px-4 gap-2 pt-2 shrink-0">
+                <button onclick="gantiTabAdmin('pendaftar')" id="tabBtnPendaftar" class="px-4 py-2.5 font-bold text-xs rounded-t-xl bg-white text-blue-900 border-t-2 border-amber-500 flex items-center gap-1.5">
+                    <i class="ph ph-users text-base"></i> Data Pendaftar
+                </button>
+                <button onclick="gantiTabAdmin('pengaturan')" id="tabBtnPengaturan" class="px-4 py-2.5 font-bold text-xs rounded-t-xl text-slate-600 hover:text-slate-900 flex items-center gap-1.5">
+                    <i class="ph ph-gear text-base"></i> Pengaturan Info Sekolah
+                </button>
+            </div>
+
+            <!-- TAB CONTENT 1: DATA PENDAFTAR -->
+            <div id="tabContentPendaftar" class="flex-1 flex flex-col overflow-hidden">
+                <!-- Admin Toolbar & Stats -->
+                <div class="p-4 sm:p-6 bg-slate-50 border-b border-slate-200 shrink-0 space-y-4">
+                    <!-- Stats Grid -->
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                        <div class="bg-white p-3 sm:p-4 rounded-2xl border border-slate-200 shadow-sm">
+                            <span class="text-[10px] font-bold text-slate-400 uppercase">Total Pendaftar</span>
+                            <div class="text-xl sm:text-2xl font-extrabold text-slate-900 mt-0.5" id="statTotal">0</div>
+                        </div>
+                        <div class="bg-white p-3 sm:p-4 rounded-2xl border border-slate-200 shadow-sm">
+                            <span class="text-[10px] font-bold text-amber-600 uppercase">Belum Diverifikasi</span>
+                            <div class="text-xl sm:text-2xl font-extrabold text-amber-600 mt-0.5" id="statPending">0</div>
+                        </div>
+                        <div class="bg-white p-3 sm:p-4 rounded-2xl border border-slate-200 shadow-sm">
+                            <span class="text-[10px] font-bold text-emerald-600 uppercase">Telah Diverifikasi</span>
+                            <div class="text-xl sm:text-2xl font-extrabold text-emerald-600 mt-0.5" id="statDiverifikasi">0</div>
+                        </div>
+                        <div class="bg-white p-3 sm:p-4 rounded-2xl border border-slate-200 shadow-sm">
+                            <span class="text-[10px] font-bold text-blue-900 uppercase">Diterima</span>
+                            <div class="text-xl sm:text-2xl font-extrabold text-blue-900 mt-0.5" id="statDiterima">0</div>
+                        </div>
                     </div>
-                    <div class="bg-white p-3 sm:p-4 rounded-2xl border border-slate-200 shadow-sm">
-                        <span class="text-[10px] font-bold text-amber-600 uppercase">Belum Diverifikasi</span>
-                        <div class="text-xl sm:text-2xl font-extrabold text-amber-600 mt-0.5" id="statPending">0</div>
-                    </div>
-                    <div class="bg-white p-3 sm:p-4 rounded-2xl border border-slate-200 shadow-sm">
-                        <span class="text-[10px] font-bold text-emerald-600 uppercase">Telah Diverifikasi</span>
-                        <div class="text-xl sm:text-2xl font-extrabold text-emerald-600 mt-0.5" id="statDiverifikasi">0</div>
-                    </div>
-                    <div class="bg-white p-3 sm:p-4 rounded-2xl border border-slate-200 shadow-sm">
-                        <span class="text-[10px] font-bold text-blue-900 uppercase">Diterima</span>
-                        <div class="text-xl sm:text-2xl font-extrabold text-blue-900 mt-0.5" id="statDiterima">0</div>
+
+                    <!-- Controls & Filter -->
+                    <div class="flex flex-wrap items-center justify-between gap-3">
+                        <!-- Select Tahun Ajaran -->
+                        <div class="flex items-center gap-2 bg-amber-50 px-3 py-1.5 rounded-xl border border-amber-300">
+                            <i class="ph ph-calendar text-amber-700 font-bold"></i>
+                            <span class="text-xs font-bold text-amber-900">Tahun Ajaran:</span>
+                            <select id="selectTahunAjaranAdmin" onchange="gantiTahunAjaranAdmin()" class="bg-white border border-amber-300 px-2 py-1 rounded-lg text-xs font-bold text-slate-800 focus:outline-none">
+                                <!-- Populated dynamically -->
+                            </select>
+                        </div>
+
+                        <div class="flex flex-1 min-w-[200px] items-center gap-2 bg-white px-3 py-2 rounded-xl border border-slate-300">
+                            <i class="ph ph-magnifying-glass text-lg text-slate-400"></i>
+                            <input type="text" id="cariAdminInput" onkeyup="filterDataAdmin()" placeholder="Cari nama, NIK, atau kode..." class="w-full text-xs bg-transparent focus:outline-none">
+                        </div>
+
+                        <div class="flex items-center gap-2">
+                            <select id="filterStatusAdmin" onchange="filterDataAdmin()" class="px-3 py-2 bg-white border border-slate-300 rounded-xl text-xs font-semibold focus:outline-none">
+                                <option value="SEMUA">Semua Status</option>
+                                <option value="Belum Diverifikasi">Belum Diverifikasi</option>
+                                <option value="Terverifikasi">Terverifikasi</option>
+                                <option value="Diterima">Diterima</option>
+                                <option value="Ditolak">Ditolak</option>
+                            </select>
+
+                            <button onclick="muatDataAdmin()" class="px-3.5 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold text-xs rounded-xl transition-all flex items-center gap-1.5" title="Refresh Data">
+                                <i class="ph ph-arrows-clockwise text-base"></i>
+                                <span class="hidden sm:inline">Refresh</span>
+                            </button>
+
+                            <button onclick="unduhDataExcel()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow transition-all flex items-center gap-1.5">
+                                <i class="ph ph-file-xls text-lg"></i>
+                                <span>Unduh Excel</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Controls & Filter -->
-                <div class="flex flex-wrap items-center justify-between gap-3">
-                    <div class="flex flex-1 min-w-[240px] items-center gap-2 bg-white px-3 py-2 rounded-xl border border-slate-300">
-                        <i class="ph ph-magnifying-glass text-lg text-slate-400"></i>
-                        <input type="text" id="cariAdminInput" onkeyup="filterDataAdmin()" placeholder="Cari nama, NIK, atau kode registrasi..." class="w-full text-xs bg-transparent focus:outline-none">
-                    </div>
-
-                    <div class="flex items-center gap-2">
-                        <select id="filterStatusAdmin" onchange="filterDataAdmin()" class="px-3 py-2 bg-white border border-slate-300 rounded-xl text-xs font-semibold focus:outline-none">
-                            <option value="SEMUA">Semua Status</option>
-                            <option value="Belum Diverifikasi">Belum Diverifikasi</option>
-                            <option value="Terverifikasi">Terverifikasi</option>
-                            <option value="Diterima">Diterima</option>
-                            <option value="Ditolak">Ditolak</option>
-                        </select>
-
-                        <button onclick="muatDataAdmin()" class="px-3.5 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold text-xs rounded-xl transition-all flex items-center gap-1.5" title="Refresh Data">
-                            <i class="ph ph-arrows-clockwise text-base"></i>
-                            <span class="hidden sm:inline">Refresh</span>
-                        </button>
-
-                        <button onclick="unduhDataExcel()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow transition-all flex items-center gap-1.5">
-                            <i class="ph ph-file-xls text-lg"></i>
-                            <span>Unduh Excel</span>
-                        </button>
+                <!-- Table Section -->
+                <div class="flex-1 overflow-auto p-4 sm:p-6 bg-white">
+                    <div class="overflow-x-auto border border-slate-200 rounded-2xl">
+                        <table class="w-full text-left text-xs border-collapse">
+                            <thead class="bg-slate-100 text-slate-700 uppercase font-bold sticky top-0 z-10">
+                                <tr>
+                                    <th class="p-3 border-b">No</th>
+                                    <th class="p-3 border-b">Kode Reg</th>
+                                    <th class="p-3 border-b">Nama Siswa</th>
+                                    <th class="p-3 border-b">JK</th>
+                                    <th class="p-3 border-b">NIK Siswa</th>
+                                    <th class="p-3 border-b">Orang Tua</th>
+                                    <th class="p-3 border-b">No. WhatsApp</th>
+                                    <th class="p-3 border-b">Status</th>
+                                    <th class="p-3 border-b text-center">Aksi / Kontrol</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabelBodyAdmin" class="divide-y divide-slate-100 font-medium">
+                                <tr>
+                                    <td colspan="9" class="p-8 text-center text-slate-400">
+                                        <i class="ph ph-spinner-gap animate-spin text-2xl mb-2 block mx-auto"></i>
+                                        Memuat data pendaftar dari server...
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
 
-            <!-- Table Section -->
-            <div class="flex-1 overflow-auto p-4 sm:p-6 bg-white">
-                <div class="overflow-x-auto border border-slate-200 rounded-2xl">
-                    <table class="w-full text-left text-xs border-collapse">
-                        <thead class="bg-slate-100 text-slate-700 uppercase font-bold sticky top-0 z-10">
-                            <tr>
-                                <th class="p-3 border-b">No</th>
-                                <th class="p-3 border-b">Kode Reg</th>
-                                <th class="p-3 border-b">Nama Siswa</th>
-                                <th class="p-3 border-b">JK</th>
-                                <th class="p-3 border-b">NIK Siswa</th>
-                                <th class="p-3 border-b">Orang Tua</th>
-                                <th class="p-3 border-b">No. WhatsApp</th>
-                                <th class="p-3 border-b">Status</th>
-                                <th class="p-3 border-b text-center">Aksi / Kontrol</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tabelBodyAdmin" class="divide-y divide-slate-100 font-medium">
-                            <tr>
-                                <td colspan="9" class="p-8 text-center text-slate-400">
-                                    <i class="ph ph-spinner-gap animate-spin text-2xl mb-2 block mx-auto"></i>
-                                    Memuat data pendaftar dari server...
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+            <!-- TAB CONTENT 2: PENGATURAN INFO SEKOLAH -->
+            <div id="tabContentPengaturan" class="flex-1 overflow-y-auto p-6 hidden">
+                <form id="formConfigAdmin" onsubmit="simpanPengaturanSekolah(event)" class="max-w-3xl mx-auto space-y-6">
+                    <div class="p-4 bg-amber-50 border border-amber-200 rounded-2xl text-xs text-amber-900 leading-relaxed">
+                        <strong>Catatan Admin:</strong> Perubahan informasi di bawah ini akan tersimpan ke database Google Sheet dan langsung terupdate secara otomatis di seluruh halaman Web.
+                    </div>
+
+                    <div class="grid sm:grid-cols-2 gap-4">
+                        <div class="sm:col-span-2">
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Nama Sekolah *</label>
+                            <input type="text" id="cfgNamaSekolah" required class="w-full px-4 py-2.5 text-sm rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-900 focus:outline-none">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Tahun Ajaran Aktif *</label>
+                            <input type="text" id="cfgTahunAjaran" required placeholder="Contoh: 2027 / 2028" class="w-full px-4 py-2.5 text-sm rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-900 focus:outline-none">
+                            <span class="text-[10px] text-slate-400">Mengubah ini akan membuat/memisah sheet data tahun baru secara otomatis!</span>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">NPSN Sekolah *</label>
+                            <input type="text" id="cfgNpsn" required class="w-full px-4 py-2.5 text-sm rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-900 focus:outline-none">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Akreditasi *</label>
+                            <input type="text" id="cfgAkreditasi" required class="w-full px-4 py-2.5 text-sm rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-900 focus:outline-none">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Kuota Penerimaan *</label>
+                            <input type="text" id="cfgKuota" required placeholder="Contoh: 60 Siswa Baru" class="w-full px-4 py-2.5 text-sm rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-900 focus:outline-none">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Biaya Pendaftaran *</label>
+                            <input type="text" id="cfgBiayaFormulir" required placeholder="Contoh: Gratis / Rp 100.000" class="w-full px-4 py-2.5 text-sm rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-900 focus:outline-none">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">No. WhatsApp Panitia SPMB *</label>
+                            <input type="text" id="cfgTeleponWaPanitia" required placeholder="08xxxxxxxxxx" class="w-full px-4 py-2.5 text-sm rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-900 focus:outline-none">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Email Resmi Sekolah *</label>
+                            <input type="email" id="cfgEmail" required class="w-full px-4 py-2.5 text-sm rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-900 focus:outline-none">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">PIN Keamanan Admin *</label>
+                            <input type="text" id="cfgPinAdmin" required class="w-full px-4 py-2.5 text-sm rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-900 focus:outline-none font-bold tracking-widest">
+                        </div>
+
+                        <div class="sm:col-span-2">
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Alamat Lengkap Sekolah *</label>
+                            <textarea id="cfgAlamat" rows="2" required class="w-full px-4 py-2.5 text-sm rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-900 focus:outline-none"></textarea>
+                        </div>
+
+                        <div class="sm:col-span-2">
+                            <label class="block text-xs font-bold text-slate-700 mb-1">URL Gambar Logo Sekolah</label>
+                            <input type="url" id="cfgLogoSekolahUrl" class="w-full px-4 py-2.5 text-sm rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-900 focus:outline-none">
+                        </div>
+                    </div>
+
+                    <div class="pt-4 border-t border-slate-200 text-right">
+                        <button type="submit" id="btnSimpanConfig" class="bg-blue-900 hover:bg-blue-800 text-white font-bold px-8 py-3 rounded-xl shadow-md transition-all flex items-center gap-2 ml-auto">
+                            <i class="ph ph-floppy-disk text-lg"></i>
+                            <span>Simpan Perubahan Informasi</span>
+                        </button>
+                    </div>
+                </form>
             </div>
 
         </div>
@@ -857,7 +1001,7 @@
         /* =========================================================================
            KOTAK PENGATURAN UTAMA (CONFIG SPMB)
            ========================================================================= */
-        const CONFIG_SPMB = {
+        let CONFIG_SPMB = {
             // 1. INFORMASI DASAR SEKOLAH
             namaSekolah: "SD Muhammadiyah 001 Melak",
             npsn: "30405647",
@@ -1008,8 +1152,10 @@
             ]
         };
 
-        // State Data Admin
+        // State Data Admin & Tahun
         let dataPendaftarGlobal = [];
+        let listTahunAjaranGlobal = [];
+        let tahunTerpilihAdmin = "";
         let pendaftarTerpilih = null;
 
         // Format nomor HP agar valid untuk link WhatsApp API
@@ -1062,8 +1208,8 @@
             }
         }
 
-        window.addEventListener('DOMContentLoaded', () => {
-            // Pasang Logo & Background
+        // Terapkan Config Ke UI Frontend
+        function terapkanConfigKeUI() {
             document.getElementById('imgLogoNav').src = CONFIG_SPMB.logoSekolahUrl;
             document.getElementById('imgLogoFooter').src = CONFIG_SPMB.logoSekolahUrl;
 
@@ -1072,10 +1218,10 @@
                 heroElem.style.backgroundImage = `url('${CONFIG_SPMB.heroBgImageUrl}')`;
             }
 
-            // Teks Identitas Sekolah
             document.getElementById('txtNamaNav').innerText = CONFIG_SPMB.namaSekolah;
             document.getElementById('txtNamaSekolah').innerText = CONFIG_SPMB.namaSekolah;
             document.getElementById('txtFooterNamaSekolah').innerText = CONFIG_SPMB.namaSekolah;
+            document.getElementById('txtFooterCopyrightSekolah').innerText = CONFIG_SPMB.namaSekolah;
             document.getElementById('txtHeroTahun').innerText = CONFIG_SPMB.tahunAjaran;
             document.getElementById('txtNpsn').innerText = CONFIG_SPMB.npsn;
             document.getElementById('txtAkreditasi').innerText = CONFIG_SPMB.akreditasi;
@@ -1086,14 +1232,33 @@
             document.getElementById('txtFooterTelp').innerText = CONFIG_SPMB.teleponWaPanitia;
             document.getElementById('txtFooterEmail').innerText = CONFIG_SPMB.email;
 
-            // Link Unduhan File Fisik
             document.getElementById('btnUnduhBrosur').href = CONFIG_SPMB.linkDownloadBrosur;
             document.getElementById('btnUnduhFormManual').href = CONFIG_SPMB.linkDownloadFormManual;
 
-            // Link WA Hero Section
             const waCleanPanitia = formatNomorWa(CONFIG_SPMB.teleponWaPanitia);
             const defaultHeroWaMsg = encodeURIComponent(`Assalamu'alaikum Panitia SPMB ${CONFIG_SPMB.namaSekolah}, saya ingin bertanya mengenai pendaftaran.`);
             document.getElementById('btnWaHero').href = `https://wa.me/${waCleanPanitia}?text=${defaultHeroWaMsg}`;
+        }
+
+        // Ambil Pengaturan Sekolah dari Server
+        async function muatConfigDariServer() {
+            try {
+                if (CONFIG_SPMB.googleScriptUrl && !CONFIG_SPMB.googleScriptUrl.includes('AKfycbx...')) {
+                    const res = await fetch(`${CONFIG_SPMB.googleScriptUrl}?action=getConfig`);
+                    const json = await res.json();
+                    if (json.result === 'success' && json.config) {
+                        CONFIG_SPMB = { ...CONFIG_SPMB, ...json.config };
+                        terapkanConfigKeUI();
+                    }
+                }
+            } catch (err) {
+                console.warn("Menggunakan konfigurasi lokal dasar.", err);
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', async () => {
+            terapkanConfigKeUI();
+            await muatConfigDariServer();
 
             // Render Galeri
             const boxGaleri = document.getElementById('boxGaleriFoto');
@@ -1156,6 +1321,72 @@
         });
 
         /* =========================================================================
+           FITUR BARU: CEK STATUS PENDAFTARAN SISWA UNTUK ORANG TUA
+           ========================================================================= */
+        async function prosesCekStatusOrtu(e) {
+            e.preventDefault();
+            const inputKode = document.getElementById('inputKodeCek').value.trim().toUpperCase();
+            const btn = document.getElementById('btnCekStatus');
+            const resBox = document.getElementById('hasilCekStatus');
+
+            if (!inputKode) return;
+
+            btn.disabled = true;
+            btn.innerHTML = `<i class="ph ph-spinner-gap animate-spin text-lg"></i> Mencari...`;
+
+            try {
+                const res = await fetch(`${CONFIG_SPMB.googleScriptUrl}?action=cekStatusOrtu&kodeReg=${encodeURIComponent(inputKode)}`);
+                const json = await res.json();
+
+                if (json.result === 'success' && json.data) {
+                    const data = json.data;
+                    document.getElementById('resNamaSiswa').innerText = data.namaSiswa;
+                    document.getElementById('resKodeReg').innerText = data.kodeReg;
+                    document.getElementById('resTglDaftar').innerText = data.waktuDaftar || '-';
+                    document.getElementById('resJkel').innerText = data.jenisKelamin || '-';
+                    document.getElementById('resOrtu').innerText = data.namaAyah || '-';
+                    document.getElementById('resAsal').innerText = data.asalSekolah || '-';
+
+                    const badge = document.getElementById('resStatusBadge');
+                    const ket = document.getElementById('resKeteranganStatus');
+
+                    if (data.statusVerifikasi === 'Terverifikasi') {
+                        badge.className = "px-3 py-1.5 rounded-full font-bold text-xs bg-emerald-100 text-emerald-800";
+                        badge.innerText = "Terverifikasi (Berkas Lengkap)";
+                        ket.className = "p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-emerald-900 text-xs leading-relaxed";
+                        ket.innerHTML = "<strong>Selamat!</strong> Berkas pendaftaran Anda telah diverifikasi oleh Panitia SPMB. Silakan tunggu informasi jadwal pengumuman/masuk sekolah.";
+                    } else if (data.statusVerifikasi === 'Diterima') {
+                        badge.className = "px-3 py-1.5 rounded-full font-bold text-xs bg-blue-100 text-blue-900";
+                        badge.innerText = "DITERIMA";
+                        ket.className = "p-3 bg-blue-50 border border-blue-200 rounded-xl text-blue-900 text-xs leading-relaxed";
+                        ket.innerHTML = "<strong>Selamat!</strong> Calon siswa dinyatakan <strong>DITERIMA</strong> sebagai Peserta Didik Baru di " + CONFIG_SPMB.namaSekolah + ". Harap segera menghubungi panitia untuk daftar ulang.";
+                    } else if (data.statusVerifikasi === 'Ditolak') {
+                        badge.className = "px-3 py-1.5 rounded-full font-bold text-xs bg-red-100 text-red-800";
+                        badge.innerText = "Ditolak / Berkas Tidak Sesuai";
+                        ket.className = "p-3 bg-red-50 border border-red-200 rounded-xl text-red-900 text-xs leading-relaxed";
+                        ket.innerHTML = "Mohon maaf, pendaftaran belum dapat diproses atau berkas tidak sesuai. Silakan hubungi Panitia SPMB via WhatsApp untuk keterangan lebih lanjut.";
+                    } else {
+                        badge.className = "px-3 py-1.5 rounded-full font-bold text-xs bg-amber-100 text-amber-800";
+                        badge.innerText = "Belum Diverifikasi";
+                        ket.className = "p-3 bg-amber-50 border border-amber-200 rounded-xl text-amber-900 text-xs leading-relaxed";
+                        ket.innerHTML = "Pendaftaran Anda telah tercatat di sistem. Harap segera membawa/menyerahkan berkas fisik ke sekolah atau mengonfirmasi panitia via WhatsApp.";
+                    }
+
+                    resBox.classList.remove('hidden');
+                    showToast("Data status pendaftar ditemukan!", "info");
+                } else {
+                    resBox.classList.add('hidden');
+                    showToast("Nomor Registrasi '" + inputKode + "' tidak ditemukan!", "error");
+                }
+            } catch (err) {
+                showToast("Gagal terhubung ke server untuk mengecek status.", "error");
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = `<i class="ph ph-magnifying-glass text-lg"></i> <span>Cek Status</span>`;
+            }
+        }
+
+        /* =========================================================================
            LOGIKA PENDAFTARAN SISWA (FORM UTAMA)
            ========================================================================= */
         async function simpanPendaftaran(e) {
@@ -1175,14 +1406,16 @@
             const dataObj = Object.fromEntries(formData.entries());
 
             const randomId = Math.floor(1000 + Math.random() * 9000);
-            const kodeReg = `SPMB-${new Date().getFullYear()}-${randomId}`;
+            const digitTahun = CONFIG_SPMB.tahunAjaran.substring(0, 4) || new Date().getFullYear();
+            const kodeReg = `SPMB-${digitTahun}-${randomId}`;
             const tglDaftar = new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
 
             const payload = {
                 action: "register",
                 ...dataObj,
                 kodeReg: kodeReg,
-                tglDaftar: tglDaftar
+                tglDaftar: tglDaftar,
+                tahunAjaran: CONFIG_SPMB.tahunAjaran
             };
 
             // Simpan lokal sementara untuk cetak pendaftar
@@ -1259,6 +1492,7 @@ Mohon dapat ditindaklanjuti untuk verifikasi berkas. Terima kasih.`;
             if (inputPin === CONFIG_SPMB.pinAdmin) {
                 tutupAuthAdmin();
                 document.getElementById('modalPanelAdmin').classList.remove('hidden');
+                isiFormPengaturanSekolah();
                 muatDataAdmin();
             } else {
                 showToast("PIN Admin Salah!", "error");
@@ -1269,6 +1503,82 @@ Mohon dapat ditindaklanjuti untuk verifikasi berkas. Terima kasih.`;
             document.getElementById('modalPanelAdmin').classList.add('hidden');
         }
 
+        function gantiTabAdmin(tab) {
+            const btnPendaftar = document.getElementById('tabBtnPendaftar');
+            const btnPengaturan = document.getElementById('tabBtnPengaturan');
+            const contentPendaftar = document.getElementById('tabContentPendaftar');
+            const contentPengaturan = document.getElementById('tabContentPengaturan');
+
+            if (tab === 'pendaftar') {
+                btnPendaftar.className = "px-4 py-2.5 font-bold text-xs rounded-t-xl bg-white text-blue-900 border-t-2 border-amber-500 flex items-center gap-1.5";
+                btnPengaturan.className = "px-4 py-2.5 font-bold text-xs rounded-t-xl text-slate-600 hover:text-slate-900 flex items-center gap-1.5";
+                contentPendaftar.classList.remove('hidden');
+                contentPengaturan.classList.add('hidden');
+            } else {
+                btnPengaturan.className = "px-4 py-2.5 font-bold text-xs rounded-t-xl bg-white text-blue-900 border-t-2 border-amber-500 flex items-center gap-1.5";
+                btnPendaftar.className = "px-4 py-2.5 font-bold text-xs rounded-t-xl text-slate-600 hover:text-slate-900 flex items-center gap-1.5";
+                contentPengaturan.classList.remove('hidden');
+                contentPendaftar.classList.add('hidden');
+            }
+        }
+
+        function isiFormPengaturanSekolah() {
+            document.getElementById('cfgNamaSekolah').value = CONFIG_SPMB.namaSekolah || '';
+            document.getElementById('cfgTahunAjaran').value = CONFIG_SPMB.tahunAjaran || '';
+            document.getElementById('cfgNpsn').value = CONFIG_SPMB.npsn || '';
+            document.getElementById('cfgAkreditasi').value = CONFIG_SPMB.akreditasi || '';
+            document.getElementById('cfgKuota').value = CONFIG_SPMB.kuota || '';
+            document.getElementById('cfgBiayaFormulir').value = CONFIG_SPMB.biayaFormulir || '';
+            document.getElementById('cfgTeleponWaPanitia').value = CONFIG_SPMB.teleponWaPanitia || '';
+            document.getElementById('cfgEmail').value = CONFIG_SPMB.email || '';
+            document.getElementById('cfgPinAdmin').value = CONFIG_SPMB.pinAdmin || '';
+            document.getElementById('cfgAlamat').value = CONFIG_SPMB.alamat || '';
+            document.getElementById('cfgLogoSekolahUrl').value = CONFIG_SPMB.logoSekolahUrl || '';
+        }
+
+        async function simpanPengaturanSekolah(e) {
+            e.preventDefault();
+            const btn = document.getElementById('btnSimpanConfig');
+            btn.disabled = true;
+            btn.innerHTML = `<i class="ph ph-spinner-gap animate-spin text-lg"></i> Menyimpan...`;
+
+            const updatedConfig = {
+                namaSekolah: document.getElementById('cfgNamaSekolah').value,
+                tahunAjaran: document.getElementById('cfgTahunAjaran').value,
+                npsn: document.getElementById('cfgNpsn').value,
+                akreditasi: document.getElementById('cfgAkreditasi').value,
+                kuota: document.getElementById('cfgKuota').value,
+                biayaFormulir: document.getElementById('cfgBiayaFormulir').value,
+                teleponWaPanitia: document.getElementById('cfgTeleponWaPanitia').value,
+                email: document.getElementById('cfgEmail').value,
+                pinAdmin: document.getElementById('cfgPinAdmin').value,
+                alamat: document.getElementById('cfgAlamat').value,
+                logoSekolahUrl: document.getElementById('cfgLogoSekolahUrl').value
+            };
+
+            try {
+                await fetch(CONFIG_SPMB.googleScriptUrl, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        action: "updateConfig",
+                        config: updatedConfig
+                    })
+                });
+
+                CONFIG_SPMB = { ...CONFIG_SPMB, ...updatedConfig };
+                terapkanConfigKeUI();
+                showToast("Pengaturan sekolah berhasil diperbarui!", "info");
+                muatDataAdmin();
+            } catch (err) {
+                showToast("Gagal menyimpan pengaturan sekolah!", "error");
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = `<i class="ph ph-floppy-disk text-lg"></i> <span>Simpan Perubahan Informasi</span>`;
+            }
+        }
+
         // Ambil Data Pendaftar dari Google Apps Script (doGet)
         async function muatDataAdmin() {
             const tbody = document.getElementById('tabelBodyAdmin');
@@ -1276,20 +1586,26 @@ Mohon dapat ditindaklanjuti untuk verifikasi berkas. Terima kasih.`;
                 <tr>
                     <td colspan="9" class="p-8 text-center text-slate-400">
                         <i class="ph ph-spinner-gap animate-spin text-2xl mb-2 block mx-auto"></i>
-                        Mengambil data dari Google Sheet...
+                        Mengambil data pendaftar dari Google Sheet...
                     </td>
                 </tr>
             `;
 
             try {
-                const res = await fetch(`${CONFIG_SPMB.googleScriptUrl}?action=getPendaftar`);
+                const targetTahun = tahunTerpilihAdmin || CONFIG_SPMB.tahunAjaran;
+                const res = await fetch(`${CONFIG_SPMB.googleScriptUrl}?action=getPendaftar&tahunAjaran=${encodeURIComponent(targetTahun)}`);
                 const json = await res.json();
 
                 if (json.result === 'success') {
-                    dataPendaftarGlobal = json.data;
+                    dataPendaftarGlobal = json.data || [];
+                    listTahunAjaranGlobal = json.listTahun || [CONFIG_SPMB.tahunAjaran];
+
+                    // Render opsi tahun ajaran jika belum dipasang
+                    renderSelectTahunAdmin(listTahunAjaranGlobal, targetTahun);
+
                     renderTabelAdmin(dataPendaftarGlobal);
                     updateStatistikAdmin(dataPendaftarGlobal);
-                    showToast("Data pendaftar berhasil diperbarui!", "info");
+                    showToast("Data pendaftar (" + targetTahun + ") berhasil diperbarui!", "info");
                 } else {
                     throw new Error("Gagal mengambil data");
                 }
@@ -1305,10 +1621,21 @@ Mohon dapat ditindaklanjuti untuk verifikasi berkas. Terima kasih.`;
             }
         }
 
+        function renderSelectTahunAdmin(listTahun, tahunAktif) {
+            const select = document.getElementById('selectTahunAjaranAdmin');
+            select.innerHTML = listTahun.map(t => `<option value="${t}" ${t === tahunAktif ? 'selected' : ''}>${t}</option>`).join('');
+            tahunTerpilihAdmin = targetTahun = select.value;
+        }
+
+        function gantiTahunAjaranAdmin() {
+            tahunTerpilihAdmin = document.getElementById('selectTahunAjaranAdmin').value;
+            muatDataAdmin();
+        }
+
         function renderTabelAdmin(data) {
             const tbody = document.getElementById('tabelBodyAdmin');
             if (!data || data.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="9" class="p-6 text-center text-slate-400">Belum ada data siswa terdaftar.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="9" class="p-6 text-center text-slate-400">Belum ada data siswa terdaftar untuk tahun ajaran ini.</td></tr>`;
                 return;
             }
 
@@ -1405,7 +1732,8 @@ Mohon dapat ditindaklanjuti untuk verifikasi berkas. Terima kasih.`;
                     body: JSON.stringify({
                         action: "updateStatus",
                         kodeReg: pendaftarTerpilih.kodeReg,
-                        status: statusBaru
+                        status: statusBaru,
+                        tahunAjaran: tahunTerpilihAdmin || CONFIG_SPMB.tahunAjaran
                     })
                 });
 
@@ -1468,7 +1796,7 @@ _Panitia SPMB ${CONFIG_SPMB.namaSekolah}_`;
             const workbook = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(workbook, worksheet, "Pendaftar SPMB");
 
-            XLSX.writeFile(workbook, `Data_Pendaftar_SPMB_${new Date().toISOString().slice(0,10)}.xlsx`);
+            XLSX.writeFile(workbook, `Data_Pendaftar_SPMB_${(tahunTerpilihAdmin||'').replace(/\s|\//g,'_')}.xlsx`);
             showToast("File Excel berhasil diunduh!", "info");
         }
 
